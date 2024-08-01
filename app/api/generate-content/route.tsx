@@ -11,7 +11,7 @@ export async function POST(req: Request) {
       console.log(pageTopic)
       console.log(pageTopic.prompt)
 
-      const prompt = `Generate a detailed wiki page about ${pageTopic.prompt}. Include a brief introduction, several sections with headers. Give your response in the form of a simple html body, with heading tags and <a> tags to what would be other links in the page. Make sure the response is formatted as an html body.`;
+      const prompt = `Generate a detailed wiki page about ${pageTopic.prompt}. Include a brief introduction, and several sections with headers. Give your response in the form of a simple html body, with heading tags and <a> tags to inline LINKS to related articles(not other sections in the same page). Make sure the response is formatted as an html body.`;
   
       const result = await streamText({
         model: openai('gpt-4o'), // Use the completion model

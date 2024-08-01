@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect, useCallback } from 'react';
+import DOMPurify from 'dompurify';
 import { useCompletion } from 'ai/react';
 
 export default function InfiniteWiki() {
@@ -46,14 +47,14 @@ export default function InfiniteWiki() {
       }
     };
 
-    // Run immediately for homepage
+    // run at start for homepage
     updateLinks();
 
-    // Set up a MutationObserver to watch for changes in the DOM
+    // watches for changes in the DOM
     const observer = new MutationObserver(updateLinks);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    // Cleanup function
+    // leanup function
     return () => {
       console.log('Cleaning up MutationObserver');
       observer.disconnect();
@@ -64,7 +65,9 @@ export default function InfiniteWiki() {
     console.log('Completion updated:', completion);
     if (completion) {
       console.log('Setting page content from completion');
-      setPageContent(completion);
+      const cleanedCompletion = completion.replace(/```html|```/g, '');
+      const sanitizedContent = DOMPurify.sanitize(cleanedCompletion);
+      setPageContent(sanitizedContent); 
     }
   }, [completion]);
 
@@ -77,11 +80,7 @@ export default function InfiniteWiki() {
   return (
     <div>
       <h1>Infinite Wiki</h1>
-      {isLoading ? (
-        <p>Loading...</p>
-      ) : (
         <div dangerouslySetInnerHTML={{ __html: pageContent }} />
-      )}
       {pageHistory.length > 0 && (
         <button onClick={() => {
           console.log('Back button clicked');
