@@ -6,9 +6,10 @@ import { useCompletion } from 'ai/react';
 export default function InfiniteWiki() {
   console.log('Rendering InfiniteWiki component');
 
-  const [currentPage, setCurrentPage] = useState('homepage');
-  const [pageHistory, setPageHistory] = useState([]);
-  const [pageContent, setPageContent] = useState(homepageContent);
+  const [currentPage, setCurrentPage] = useState<string>('homepage')
+  const [pageHistory, setPageHistory] = useState<string[]>([]); 
+  const [pageContent, setPageContent] = useState<string>(homepageContent);
+  const [searchTerm, setSearchTerm] = useState<string>(''); 
 
   console.log('Current state:', { currentPage, pageHistory, pageContentLength: pageContent.length });
 
@@ -18,7 +19,7 @@ export default function InfiniteWiki() {
 
   console.log('useCompletion state:', { completion, isLoading });
 
-  const handleLinkClick = useCallback(async (topic) => {
+  const handleLinkClick = useCallback(async (topic: string) => {
     console.log('handleLinkClick called with topic:', topic);
     setPageHistory(prev => {
       console.log('Updating page history:', [...prev, currentPage]);
@@ -62,9 +63,7 @@ export default function InfiniteWiki() {
   }, [handleLinkClick]);
 
   useEffect(() => {
-    console.log('Completion updated:', completion);
     if (completion) {
-      console.log('Setting page content from completion');
       const cleanedCompletion = completion.replace(/```html|```/g, '');
       const sanitizedContent = DOMPurify.sanitize(cleanedCompletion);
       setPageContent(sanitizedContent); 
@@ -75,13 +74,18 @@ export default function InfiniteWiki() {
     console.log('Page content updated, new length:', pageContent.length);
   }, [pageContent]);
 
-  console.log('Rendering component, isLoading:', isLoading);
-
   return (
     <div>
-      <h1>Infinite Wiki</h1>
+      <h1 className='text-5xl font-bold font-serif mb-3'>Wikiinfinitia</h1>
+        <div className='mb-2'>
+          <input className="border border-slate-500 px-2" type="text" placeholder="Search..." value={searchTerm} onChange={(e) => {
+            console.log('Search input changed:', e.target.value);
+            setSearchTerm(e.target.value);
+          }} />
+          <button onClick={()=> handleLinkClick(searchTerm)} className="font-bold border border-slate-500 bg-slate-100 px-2"> Search </button>
+        </div>
         <div dangerouslySetInnerHTML={{ __html: pageContent }} />
-      {pageHistory.length > 0 && (
+      {/* {pageHistory.length > 0 && (
         <button onClick={() => {
           console.log('Back button clicked');
           const previousPage = pageHistory.pop();
@@ -92,13 +96,13 @@ export default function InfiniteWiki() {
         }}>
           Back
         </button>
-      )}
+      )} */}
     </div>
   );
 }
 
-const homepageContent = `
-  <p>Welcome to Infinite Wiki, the free encyclopedia that AI alone can edit. Click any article below to get started browsing. Remember, knowledge may be infinite, but so is bullshit.</p>
+const homepageContent: string = `
+  <p>Welcome to Wikiinfinitia, the free encyclopedia that AI-one can edit. Click any article below to get started browsing, or search for anything (even ur mom). Remember, knowledge may be infinite, but so is bullshit.</p>
 
   <h2>Featured Articles</h2>
   <ul>
