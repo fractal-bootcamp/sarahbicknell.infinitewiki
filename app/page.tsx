@@ -37,16 +37,25 @@ export default function InfiniteWiki() {
       console.log('Updating links');
       const links = document.getElementsByTagName('a');
       console.log('Number of links found:', links.length);
-      for (let link of links) {
+
+      const linksArray = Array.from(links);
+
+      for (let link of linksArray) {
         const topic = link.textContent;
+        if (link.className === 'external-link') {
+          continue;
+        }
         link.href = '#';
         link.onclick = (e) => {
           e.preventDefault();
+        if (topic) {
           console.log('Link clicked:', topic);
           handleLinkClick(topic);
+        }
         };
       }
     };
+    
 
     // run at start for homepage
     updateLinks();
@@ -97,6 +106,9 @@ export default function InfiniteWiki() {
           Back
         </button>
       )} */}
+    {currentPage === "homepage" && 
+      <a href="http://hyperdiscogirl.netlify.app" className="external-link">Hyperbolic Discounting Girl</a>
+    }
     </div>
   );
 }
@@ -120,5 +132,12 @@ const homepageContent: string = `
     <li><a href="#">Modern Cryptography</a></li>
     <li><a href="#">Sustainable Energy Solutions</a></li>
     <li><a href="#">The Wonders of Deep Sea Exploration</a></li>
+  </ul>
+  <h2>...But Are They Really Random Articles</h2>
+  <ul>
+    <li><a href="#"> Ennui And You </a></li>
+    <li><a href="#">The Worms at the Bottom of the Sea</a></li>
+    <li><a href="#">The Quest for the Ultimate Answer</a></li>
+    <li><a href="#">The Search for the Cosmic Egg</a></li>
   </ul>
 `;
